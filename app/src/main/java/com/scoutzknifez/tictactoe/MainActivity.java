@@ -24,8 +24,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         transitionToFragment(new TicTacToeBoard(), Constants.TICTACTOE_BOARD_TAG);
-        Utils.test(API.class).getLogin("ConnorCon").enqueue(new Callback<LobbyPacket>() {
+
+
+        Utils.test(API.class).getLogin(Utils.createJSON("username", "Connorcon")).enqueue(new Callback<LobbyPacket>() {
             @Override
             public void onResponse(Call<LobbyPacket> call, Response<LobbyPacket> response) {
                 System.out.println(response.body());
