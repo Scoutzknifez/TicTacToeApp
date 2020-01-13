@@ -102,6 +102,7 @@ public class TTTBoard {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("\n");
 
         for (int x = 0; x < Constants.BOARD_SIZE; x++) {
 
