@@ -64,4 +64,8 @@ public class Utils {
 
         System.out.println("[" + timeAtMoment + "] " + String.format(message, objects));
     }
+
+    public static void log(Object object) {
+        log("%s", object);
+    }
 }
