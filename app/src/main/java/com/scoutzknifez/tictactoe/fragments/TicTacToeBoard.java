@@ -89,7 +89,7 @@ public class TicTacToeBoard extends Fragment {
                 else
                     board.setSlotToCircle(index);
 
-                if (board.didWin(index))
+                if (board.didWin())
                     Toast.makeText(getContext(), "GAME OVER!!! " + (isXTurn() ? "X" : "O") + " WON THE GAME", Toast.LENGTH_LONG).show();
 
                 setXTurn(!isXTurn());
