@@ -1,12 +1,14 @@
-package com.scoutzknifez.tictactoe.structures;
+package com.scoutzknifez.tictactoe.gamelogic.dtos;
 
+
+import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum Pieces {
+public enum Pieces implements Serializable {
     BLANK(' '),
     CROSS('X'),
     CIRCLE('O');

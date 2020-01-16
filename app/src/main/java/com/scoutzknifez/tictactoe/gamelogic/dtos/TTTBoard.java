@@ -1,15 +1,17 @@
-package com.scoutzknifez.tictactoe.structures;
+package com.scoutzknifez.tictactoe.gamelogic.dtos;
 
 import androidx.annotation.NonNull;
 
 import com.scoutzknifez.tictactoe.utility.Constants;
+
+import java.io.Serializable;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TTTBoard {
+public class TTTBoard implements Serializable {
     // In slots, -1 is O, 0 is empty, 1 is X
     private Pieces[] slots = new Pieces[Constants.BOARD_SIZE];
 
@@ -18,7 +20,7 @@ public class TTTBoard {
             slots[i] = Pieces.BLANK;
     }
 
-    public boolean didWin(int slot) {
+    public boolean didWin() {
         // TODO Modular check for wins based off of passed in slot
         // TOP
         if (slots[0].isEqualTo(slots[1]) && slots[1].isEqualTo(slots[2]))
@@ -57,7 +59,7 @@ public class TTTBoard {
 
     public boolean gameIsOver() {
         // TODO                         TEMP
-        return boardIsFull() || didWin(0);
+        return boardIsFull() || didWin();
     }
 
 

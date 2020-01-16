@@ -1,6 +1,7 @@
 package com.scoutzknifez.tictactoe.gamelogic;
 
 import com.scoutzknifez.tictactoe.gamelogic.dtos.Sample;
+import com.scoutzknifez.tictactoe.gamelogic.dtos.TTTBoard;
 import com.scoutzknifez.tictactoe.gamelogic.dtos.Value;
 import com.scoutzknifez.tictactoe.utility.Constants;
 import com.scoutzknifez.tictactoe.utility.Globals;
@@ -60,8 +61,8 @@ public class ClientConnection extends Thread {
                 sendOutput(new Sample("Connor"));
                 Object object = getOis().readObject();
 
-                if (object instanceof Value) {
-                    Value value = (Value) object;
+                if (object instanceof TTTBoard) {
+                    TTTBoard value = (TTTBoard) object;
                     Utils.log(value);
                 }
 

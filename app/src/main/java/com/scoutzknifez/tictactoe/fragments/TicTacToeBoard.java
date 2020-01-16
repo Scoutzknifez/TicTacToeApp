@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.scoutzknifez.tictactoe.R;
-import com.scoutzknifez.tictactoe.structures.TTTBoard;
+import com.scoutzknifez.tictactoe.gamelogic.dtos.TTTBoard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
