@@ -13,7 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.scoutzknifez.tictactoe.R;
-import com.scoutzknifez.tictactoe.gamelogic.dtos.TTTBoard;
+import com.scoutzknifez.tictactoe.fragments.interfaces.Refreshable;
+import com.scoutzknifez.tictactoe.gamelogic.dtos.GameState;
+import com.scoutzknifez.tictactoe.utility.Globals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class TicTacToeBoard extends Fragment {
+public class TicTacToeBoard extends Fragment implements Refreshable {
+    @BindView(R.id.turn_tv)
+    TextView turnTextView;
+
     @BindView(R.id.reset_button)
     RelativeLayout resetButton;
 
@@ -61,8 +66,6 @@ public class TicTacToeBoard extends Fragment {
 
 
     private List<TextView> slotTextViews = new ArrayList<>();
-    private TTTBoard board = new TTTBoard();
-    private boolean isXTurn = true;
 
 
     @Nullable
@@ -72,33 +75,41 @@ public class TicTacToeBoard extends Fragment {
 
         ButterKnife.bind(this, created);
 
+        refreshScreen();
+
         slotTextViews.addAll(Arrays.asList(slot0, slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8));
 
         // Add click listeners
         for (int i = 0; i < slotTextViews.size(); i++) {
             final int index = i;
             slotTextViews.get(i).setOnClickListener(slot -> {
-                if (!board.slotIsEmpty(index)) {
-                    Toast.makeText(this.getContext(), "This slot is not empty!", Toast.LENGTH_SHORT).show();
-                    System.out.println(board);
+                if (!Globals.isMyTurn){
+                    Toast.makeText(getContext(), "It is not your turn!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (isXTurn())
-                    board.setSlotToCross(index);
+                if (!Globals.gameState.getBoard().slotIsEmpty(index)) {
+                    Toast.makeText(this.getContext(), "This slot is not empty!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (Globals.isX)
+                    Globals.gameState.getBoard().setSlotToCross(index);
                 else
-                    board.setSlotToCircle(index);
+                    Globals.gameState.getBoard().setSlotToCircle(index);
 
-                if (board.didWin())
-                    Toast.makeText(getContext(), "GAME OVER!!! " + (isXTurn() ? "X" : "O") + " WON THE GAME", Toast.LENGTH_LONG).show();
+                if (Globals.gameState.getBoard().didWin())
+                    Toast.makeText(getContext(), "GAME OVER!!! " + (Globals.isX ? "X" : "O") + " WON THE GAME", Toast.LENGTH_LONG).show();
 
-                setXTurn(!isXTurn());
+                Globals.clientConnection.sendOutput(new GameState(Globals.isX == Globals.isMyTurn, Globals.gameState.getBoard()));
+
+                Globals.isMyTurn = false;
                 refreshScreen();
             });
         }
 
         resetButton.setOnClickListener(view -> {
-            board.resetBoard();
+            Globals.gameState.getBoard().resetBoard();
             refreshScreen();
         });
 
@@ -106,8 +117,18 @@ public class TicTacToeBoard extends Fragment {
     }
 
     private void refreshScreen() {
+        String textPlaceholder = "It is " + (Globals.isMyTurn ? "your" : "their") + " turn.";
+        turnTextView.setText(textPlaceholder);
+
         for (int i = 0; i < slotTextViews.size(); i++) {
-            slotTextViews.get(i).setText("" + board.getSlots()[i].getCharacter());
+            slotTextViews.get(i).setText("" + Globals.gameState.getBoard().getSlots()[i].getCharacter());
         }
+    }
+
+    @Override
+    public void refresh() {
+        getActivity().runOnUiThread(() -> {
+            refreshScreen();
+        });
     }
 }

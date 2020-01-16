@@ -15,10 +15,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        transitionToFragment(new TicTacToeBoard(), Constants.TICTACTOE_BOARD_TAG);
-
         Globals.clientConnection = new ClientConnection("10.0.2.2");
         Globals.clientConnection.start();
+
+        Globals.refreshable = new TicTacToeBoard();
+        transitionToFragment((TicTacToeBoard) Globals.refreshable, Constants.TICTACTOE_BOARD_TAG);
 
         /*Utils.test(API.class).getLogin(Utils.createJSON("username", "Connorcon")).enqueue(new Callback<LobbyPacket>() {
             @Override

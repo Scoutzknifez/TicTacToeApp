@@ -6,24 +6,30 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <RelativeLayout
-        android:id="@+id/reset_button"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:background="@color/blue"
+    <TextView
+        android:id="@+id/screen_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tictactoe_board">
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="RESET"
-            android:textAlignment="center"
-            android:textColor="@color/black"/>
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/turn_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/screen_title_tv"
+        app:layout_constraintBottom_toTopOf="@id/tictactoe_board"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/tictactoe_board"
@@ -189,5 +195,25 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/reset_button"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:background="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tictactoe_board"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="RESET"
+            android:textAlignment="center"
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

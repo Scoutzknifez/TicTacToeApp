@@ -1,7 +1,6 @@
 package com.scoutzknifez.tictactoe.gamelogic;
 
-import com.scoutzknifez.tictactoe.gamelogic.dtos.Sample;
-import com.scoutzknifez.tictactoe.gamelogic.dtos.TTTBoard;
+import com.scoutzknifez.tictactoe.gamelogic.dtos.GameState;
 import com.scoutzknifez.tictactoe.gamelogic.dtos.Value;
 import com.scoutzknifez.tictactoe.utility.Constants;
 import com.scoutzknifez.tictactoe.utility.Globals;
@@ -15,7 +14,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class ClientConnection extends Thread {
     private Socket socket;
@@ -39,6 +40,14 @@ public class ClientConnection extends Thread {
                         setOos(new ObjectOutputStream(getOutput()));
                         setInput(getSocket().getInputStream());
                         setOis(new ObjectInputStream(getInput()));
+
+                        // Get the immediate response from the server which declares
+                        //  if this player is X or O, and sets who turn it is (X goes first)
+                        Object obj = getOis().readObject();
+                        if (obj instanceof Value) {
+                            Globals.isX = (boolean) ((Value) obj).getValue();
+                            Globals.isMyTurn = Globals.isX;
+                        }
                     } catch (Exception e) {
                         Utils.log("Could not get the input channels for the socket! %s", e);
                         throw new ObjectConstructionException(e.getMessage());
@@ -47,6 +56,7 @@ public class ClientConnection extends Thread {
                     Utils.log("Could not connect to game server! %s", e);
                 }
             });
+
             thread.start();
             thread.join();
         } catch (Exception e) {
@@ -58,12 +68,25 @@ public class ClientConnection extends Thread {
     public void run() {
         while (Globals.inGame) {
             try {
-                sendOutput(new Sample("Connor"));
+                System.out.println("Waiting for read");
                 Object object = getOis().readObject();
+                System.out.println("Started read");
 
-                if (object instanceof TTTBoard) {
-                    TTTBoard value = (TTTBoard) object;
-                    Utils.log(value);
+                if (object instanceof GameState) {
+                    GameState gs = (GameState) object;
+                    Globals.gameState = gs;
+                    Globals.isMyTurn = gs.isXTurn() == Globals.isX;
+                    Globals.refreshable.refresh();
+                }
+                else if (object instanceof Value) {
+                    boolean response = (boolean) ((Value) object).getValue();
+                    if (response)
+                        Globals.isMyTurn = false;
+                    // It was not a valid packet or it was not their turn and packet was sent
+                    else {
+                        // TODO Send a packet from the server to force the UI to update itself
+                        //  Therefore syncing the client back with the server and game
+                    }
                 }
 
                 Thread.sleep(5000);
@@ -81,12 +104,15 @@ public class ClientConnection extends Thread {
         }
     }
 
-    public void sendOutput(Object object) {
-        try {
-            getOos().writeObject(object);
-            getOos().flush();
-        } catch (Exception e) {
-            Utils.log("Could not send the object (%s) to the client! %s", object, e);
-        }
+    public synchronized void sendOutput(final Object object) {
+        new Thread(() -> {
+            try {
+                getOos().writeObject(object);
+                getOos().flush();
+            } catch (Exception e) {
+                Utils.log("Could not send the object (%s) to the server! %s", object, e);
+            }
+        }).start();
+
     }
 }
